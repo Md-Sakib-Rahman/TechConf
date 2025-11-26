@@ -11,6 +11,8 @@ import { useState } from "react";
 import FeaturedEvent from "@/components/FeaturedEvent/FeaturedEvent";
 import Testimonials from "@/components/Testimonials/Testimonials";
 import Sponsor from "@/components/Sponsor/Sponsor";
+import ToastProvider from "@/components/toastify/ToastProvider";
+
 export default  function Home() {
 
   const [imgArr, setImgArr] = useState([bannerImage1, bannerImage2, bannerImage3, bannerImage4])  
@@ -23,6 +25,7 @@ export default  function Home() {
       <FeaturedEvent></FeaturedEvent>
       <Testimonials/>
       <Sponsor/>
+      
     </div>
   );
 }

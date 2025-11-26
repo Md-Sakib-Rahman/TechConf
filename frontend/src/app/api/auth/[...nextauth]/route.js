@@ -61,6 +61,7 @@ const handler = NextAuth({
           
           if (data.token) {
             user.apiToken = data.token;
+            
             return true;
           }
         } catch (error) {

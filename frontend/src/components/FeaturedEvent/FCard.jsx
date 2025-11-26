@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 const FCard = ({card}) => {
@@ -16,7 +17,7 @@ const FCard = ({card}) => {
             {card.desc_short}
           </p>
           <div className="card-actions justify-end">
-            <button className="btn btn-primary">Details</button>
+            <Link href={`/eventdetails/${card._id}`} className="btn btn-primary">Details</Link>
           </div>
         </div>
       </div>

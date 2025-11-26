@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
+import { toast, Bounce } from "react-toastify";
 const LoginPage = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -12,26 +12,47 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-   
     const res = await signIn("credentials", {
-      redirect: false, 
+      redirect: false,
       email,
       password,
     });
 
     if (res?.error) {
       setError("Invalid email or password");
+      toast.error("Invalid email or password", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
       setLoading(false);
+      
     } else {
       
       router.push("/");
-      router.refresh(); 
+      router.refresh();
+      toast.success("Successfully logged in", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
     }
   };
 
@@ -43,11 +64,24 @@ const LoginPage = () => {
         </div>
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl ">
           <div className="card-body ">
-            
-            
             {error && (
-              <div role="alert" className="alert alert-error p-2 text-sm text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div
+                role="alert"
+                className="alert alert-error p-2 text-sm text-white"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
                 <span>{error}</span>
               </div>
             )}
@@ -55,44 +89,48 @@ const LoginPage = () => {
             <form onSubmit={handleSubmit}>
               <fieldset className="fieldset">
                 <label className="label">Email</label>
-                <input 
-                  type="email" 
-                  className="input w-full" 
-                  placeholder="Email" 
+                <input
+                  type="email"
+                  className="input w-full"
+                  placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                
+
                 <label className="label">Password</label>
-                <input 
-                  type="password" 
-                  className="input w-full" 
-                  placeholder="Password" 
+                <input
+                  type="password"
+                  className="input w-full"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                
+
                 <div className="mt-2">
-                  <Link href='/register' className="link link-hover text-primary text-sm">
+                  <Link
+                    href="/register"
+                    className="link link-hover text-primary text-sm"
+                  >
                     Don't have an Account?
                   </Link>
                 </div>
-                
-                <button 
-                  type="submit" 
+
+                <button
+                  type="submit"
                   className="btn btn-neutral mt-4 w-full"
                   disabled={loading}
                 >
                   {loading ? "Logging in..." : "Login"}
                 </button>
+                
               </fieldset>
             </form>
 
             <div className="divider my-0">OR</div>
 
-            <button 
+            <button
               onClick={() => signIn("google", { callbackUrl: "/" })}
               className="btn bg-white text-black border-[#e5e5e5] w-full"
               type="button"

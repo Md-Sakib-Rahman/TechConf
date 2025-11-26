@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { toast, Bounce } from 'react-toastify';
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const RegisterPage = () => {
       const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
       
-      await axios.post(`${backendUrl}/auth/signup`, {
+      await axios.post(`${backendUrl}auth/signup`, {
         name: formData.name,
         email: formData.email,
         password: formData.password,
@@ -50,6 +51,17 @@ const RegisterPage = () => {
       if (res?.error) {
         setError("Registration successful, but login failed. Please sign in manually.");
       } else {
+         toast.success("Successfully logged in", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
         router.push("/"); 
       }
 
