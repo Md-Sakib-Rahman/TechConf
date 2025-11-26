@@ -30,7 +30,7 @@ const EventsPage = () => {
   );
 
   if (loading) return (
-    <div className="flex justify-center items-center my-20">
+    <div className="flex justify-center items-center my-20 min-h-screen">
       <span className="loading loading-spinner loading-xl"></span>
     </div>
   );
