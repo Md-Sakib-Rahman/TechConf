@@ -1,26 +1,62 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-require('dotenv').config()
+
 const mongoose= require('mongoose')
 const app = express()
 const port = process.env.PORT || 5000
-
-
-app.use(cors())
-app.use(express.json())
-const verifyToken = require('./middleware/auth');
-mongoose.connect(process.env.MONGO_URI).then(()=>{
-    console.log('Connected to DB')
-}).catch(err => {
-    console.log(err)
-})
-
-
 const User=  require('./Models/User')
 const Event= require('./Models/Event')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
+
+app.use(cors())
+app.use(express.json())
+const verifyToken = require('./middleware/auth');
+// mongoose.connect(process.env.MONGO_URI).then(()=>{
+//     console.log('Connected to DB')
+// }).catch(err => {
+//     console.log(err)
+// })
+let isConnected = false;
+
+const connectDB = async () => {
+    // 1. Check if we already have a connection (Cache)
+    if (isConnected) return;
+
+    // 2. Check Mongoose's internal state
+    if (mongoose.connection.readyState === 1) {
+        isConnected = true;
+        return;
+    }
+
+    // 3. Establish new connection
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            dbName: 'techconfDB', // Optional: forces specific DB name
+            serverSelectionTimeoutMS: 5000 // Fail fast if network is down
+        });
+        isConnected = true;
+        console.log("=> 🟢 MongoDB Connected Successfully");
+    } catch (err) {
+        console.error("=> 🔴 MongoDB Connection Failed:", err.message);
+        throw err; // Stop request if DB fails
+    }
+};
+
+// GLOBAL MIDDLEWARE: Force DB Connection before ANY route
+// This prevents "buffering timed out" because we AWAIT the connection here.
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        res.status(500).json({ message: "Database Connection Error" });
+    }
+});
+
+
 app.get('/api/all-events', async (req, res)=>{
 
     try{
